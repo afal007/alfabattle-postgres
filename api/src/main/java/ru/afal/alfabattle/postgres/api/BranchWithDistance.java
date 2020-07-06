@@ -1,10 +1,9 @@
 package ru.afal.alfabattle.postgres.api;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class BranchWithDistance extends Branch {
+public class BranchWithDistance {
   private Long distance;
+  private Branch branch;
 }
