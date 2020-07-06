@@ -2,10 +2,8 @@ package ru.afal.alfabattle.postgres.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.afal.alfabattle.postgres.api.BranchWithDistance;
-import ru.afal.alfabattle.postgres.api.Request;
 import ru.afal.alfabattle.postgres.api.Branch;
-import ru.afal.alfabattle.postgres.model.Model;
+import ru.afal.alfabattle.postgres.api.BranchWithDistance;
 import ru.afal.alfabattle.postgres.repository.BranchRepository;
 
 import java.util.List;
@@ -18,13 +16,8 @@ public class BranchServiceImpl implements BranchService {
   private final BranchRepository branchRepository;
 
   @Override
-  public Branch method(Request request) {
-    return new Branch();
-  }
-
-  @Override
-  public Optional<Branch> findByID(long branchID) {
-    return branchRepository.findByID(branchID);
+  public Branch findByID(long branchID) throws BranchNotFoundException {
+    return branchRepository.findByID(branchID).orElseThrow(BranchNotFoundException::new);
   }
 
   @Override
@@ -44,18 +37,21 @@ public class BranchServiceImpl implements BranchService {
     if (nearest != null) {
       branchWithDistance = new BranchWithDistance();
       branchWithDistance.setDistance((long) nearestDistance);
-      branchWithDistance.setId(nearest.getId());
-      branchWithDistance.setLon(nearest.getLon());
-      branchWithDistance.setLat(nearest.getLat());
-      branchWithDistance.setTitle(nearest.getTitle());
-      branchWithDistance.setAddress(nearest.getAddress());
+
+      Branch branch = new Branch();
+      branch.setId(nearest.getId());
+      branch.setLon(nearest.getLon());
+      branch.setLat(nearest.getLat());
+      branch.setTitle(nearest.getTitle());
+      branch.setAddress(nearest.getAddress());
+      branchWithDistance.setBranch(branch);
     }
 
     return Optional.ofNullable(branchWithDistance);
   }
 
   public double distance(double lat1, double lat2, double lon1,
-                                double lon2, double el1, double el2) {
+                         double lon2, double el1, double el2) {
 
     final int R = 6371; // Radius of the earth
 
