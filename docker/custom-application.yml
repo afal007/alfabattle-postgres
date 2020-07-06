@@ -1,0 +1,17 @@
+server:
+  port: 8080
+
+spring:
+  jpa:
+    open-in-view: false
+  datasource:
+    url: 127.0.0.1
+    password: password
+    username: username
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      username: ${spring.datasource.username}
+      password: ${spring.datasource.password}
+      maximum-pool-size: 10
+      connection-timeout: 20000
+

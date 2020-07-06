@@ -1,0 +1,83 @@
+plugins {
+  id 'org.springframework.boot' version '2.3.1.RELEASE'
+  id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+  id 'java'
+}
+
+allprojects {
+  apply plugin: 'idea'
+  apply plugin: 'java-library'
+  apply plugin: 'io.spring.dependency-management'
+
+  apply from: rootProject.file('versions.gradle')
+
+  dependencyManagement {
+    imports {
+      mavenBom("org.springframework.boot:spring-boot-dependencies:2.3.1.RELEASE")
+    }
+  }
+
+  tasks.withType(JavaCompile) {
+    sourceCompatibility = 11
+    targetCompatibility = 11
+    options.encoding = 'UTF-8'
+  }
+
+  repositories {
+    mavenCentral()
+  }
+
+  dependencies {
+    implementation group: 'org.jetbrains', name: 'annotations', version: versions['jetbrains']
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+  }
+}
+
+configurations {
+  compileOnly {
+    extendsFrom annotationProcessor
+  }
+}
+
+dependencies {
+  implementation project(':api')
+
+  implementation 'org.springframework.boot:spring-boot-starter-web'
+  implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+  implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+  implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+  developmentOnly 'org.springframework.boot:spring-boot-devtools'
+  annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+  runtimeOnly 'org.postgresql:postgresql'
+
+  implementation group: 'org.mapstruct', name: 'mapstruct', version: versions['mapstruct']
+  annotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: versions['mapstruct']
+
+  testImplementation('org.springframework.boot:spring-boot-starter-test') {
+    exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+  }
+}
+
+test {
+  useJUnitPlatform()
+}
+
+bootBuildImage {
+  imageName = "iamhostage/${project.name}:${project.version}"
+}
+
+task bootPushImage {
+  group = 'build'
+  description = 'Pushes an OCI image of the application using the output of bootBuildImage task'
+  dependsOn bootBuildImage
+
+  doLast {
+    exec {
+      executable 'docker'
+      args 'push', "docker.io/${bootBuildImage.imageName}"
+    }
+  }
+}

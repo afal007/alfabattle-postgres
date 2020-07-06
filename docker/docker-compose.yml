@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  alfabattle-rest-websocker:
+    image: iamhostage/alfabattle-postgres:0.0.1-SNAPSHOT
+    ports:
+    - 8080:8080
+    volumes:
+    - C:\Users\Alex\IdeaProjects\alfabattle-postgres:/etc
+    environment:
+      SPRING_CONFIG_LOCATION: /etc/custom-application.yml
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/postgres
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+

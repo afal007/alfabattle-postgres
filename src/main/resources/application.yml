@@ -1,0 +1,16 @@
+server:
+  port: 8081
+
+spring:
+  jpa:
+    open-in-view: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/alfa_battle
+    username: alfa_battle
+    password: qwe123
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      username: ${spring.datasource.username}
+      password: ${spring.datasource.password}
+      maximum-pool-size: 10
+      connection-timeout: 20000
